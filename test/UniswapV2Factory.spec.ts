@@ -7,7 +7,7 @@ import { solidity, MockProvider, createFixtureLoader } from 'ethereum-waffle'
 import { getCreate2Address } from './shared/utilities'
 import { factoryFixture } from './shared/fixtures'
 
-import UniswapV2Pair from '../build/UniswapV2Pair.json'
+import UniswapV2Pair from '../build/contracts/UniswapV2Pair.json'
 
 chai.use(solidity)
 
@@ -38,7 +38,7 @@ describe('UniswapV2Factory', () => {
   })
 
   async function createPair(tokens: [string, string]) {
-    const bytecode = `0x${UniswapV2Pair.evm.bytecode.object}`
+    const bytecode = UniswapV2Pair.bytecode
     const create2Address = getCreate2Address(factory.address, tokens, bytecode)
     await expect(factory.createPair(...tokens))
       .to.emit(factory, 'PairCreated')
@@ -68,7 +68,7 @@ describe('UniswapV2Factory', () => {
   it('createPair:gas', async () => {
     const tx = await factory.createPair(...TEST_ADDRESSES)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(2471809)
+    expect(receipt.gasUsed).to.eq(1987121)
   })
 
   it('setFeeTo', async () => {
